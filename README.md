@@ -12,7 +12,8 @@ I made this after my [task tracker](https://github.com/mubarak-jimoh/task-tracke
 
 - Create courses with a title, category and description
 - Add lessons to each course
-- Tick lessons off and see progress for the course
+- Tick lessons off and see progress for the course, with a progress bar
+- Delete a lesson, or a whole course after a confirmation
 - Quick stats in the sidebar: courses, total lessons and lessons completed
 - Everything is saved in LocalStorage, so it is still there after a refresh
 - Works on mobile, where the sidebar stacks above the content
