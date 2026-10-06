@@ -202,3 +202,70 @@ body {
         width: 100%;
     }
 }
+
+/* PROGRESS BARS */
+.bar {
+    height: 10px;
+    background: #182235;
+    border-radius: 5px;
+    overflow: hidden;
+    margin-top: 10px;
+    max-width: 480px;
+}
+
+.bar span {
+    display: block;
+    height: 100%;
+    width: 0;
+    background: #6ee7b7;
+    border-radius: 5px;
+    transition: width 0.3s;
+}
+
+.bar.small {
+    height: 5px;
+    margin-top: 8px;
+    background: #0f1624;
+}
+
+.lesson {
+    justify-content: space-between;
+}
+
+.lesson label {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex: 1;
+    cursor: pointer;
+}
+
+.remove-lesson {
+    background: transparent;
+    border: none;
+    color: #9aa4b8;
+    font-size: 22px;
+    line-height: 1;
+    cursor: pointer;
+    padding: 0 6px;
+}
+
+.remove-lesson:hover {
+    color: #f87171;
+}
+
+.btn-danger {
+    margin-top: 30px;
+    padding: 10px 16px;
+    background: transparent;
+    border: 1px solid #f87171;
+    color: #f87171;
+    border-radius: 8px;
+    cursor: pointer;
+}
+
+.btn-danger:hover {
+    background: #f87171;
+    color: #0f1624;
+}
+

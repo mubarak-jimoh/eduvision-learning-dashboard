@@ -27,6 +27,13 @@ function escapeHtml(text) {
     return div.innerHTML;
 }
 
+// How much of a course is finished, as a whole number from 0 to 100
+function percentDone(course) {
+    if (course.lessons.length === 0) return 0;
+    const done = course.lessons.filter(l => l.done).length;
+    return Math.round((done / course.lessons.length) * 100);
+}
+
 // -----------------------------
 // UI UPDATE
 // -----------------------------
@@ -39,6 +46,7 @@ function renderCourses() {
         div.innerHTML = `
             <strong>${escapeHtml(course.title)}</strong>
             <p>${escapeHtml(course.category)}</p>
+            <div class="bar small"><span style="width: ${percentDone(course)}%"></span></div>
         `;
         div.onclick = () => openCourse(index);
         coursesList.appendChild(div);
@@ -70,6 +78,7 @@ function openCourse(index) {
         <h1>${escapeHtml(course.title)}</h1>
         <p>${escapeHtml(course.description)}</p>
         <p class="progress" id="courseProgress"></p>
+        <div class="bar"><span id="courseBar"></span></div>
         <h3>Lessons</h3>
         <div id="lessonList"></div>
 
@@ -77,6 +86,8 @@ function openCourse(index) {
             <input type="text" id="lessonTitle" placeholder="Lesson title">
             <button class="btn" id="addLessonBtn">+ Add Lesson</button>
         </div>
+
+        <button class="btn-danger" id="deleteCourseBtn">Delete course</button>
     `;
 
     const lessonTitle = document.getElementById("lessonTitle");
@@ -91,6 +102,7 @@ function openCourse(index) {
         lessonTitle.focus();
     };
 
+    document.getElementById("deleteCourseBtn").onclick = () => deleteCourse(index);
     document.getElementById("addLessonBtn").onclick = addLesson;
     lessonTitle.onkeydown = (e) => {
         if (e.key === "Enter") addLesson();
@@ -111,13 +123,25 @@ function renderLessons(courseIndex) {
     }
 
     course.lessons.forEach((lesson, i) => {
-        const label = document.createElement("label");
-        label.className = "course-card lesson" + (lesson.done ? " done" : "");
-        label.innerHTML = `
-            <input type="checkbox" ${lesson.done ? "checked" : ""} data-i="${i}">
-            <span>${escapeHtml(lesson.title)}</span>
+        const row = document.createElement("div");
+        row.className = "course-card lesson" + (lesson.done ? " done" : "");
+        row.innerHTML = `
+            <label>
+                <input type="checkbox" ${lesson.done ? "checked" : ""} data-i="${i}">
+                <span>${escapeHtml(lesson.title)}</span>
+            </label>
+            <button class="remove-lesson" data-i="${i}" aria-label="Delete lesson ${escapeHtml(lesson.title)}">&times;</button>
         `;
-        lessonList.appendChild(label);
+        lessonList.appendChild(row);
+    });
+
+    // Delete lesson
+    document.querySelectorAll("#lessonList .remove-lesson").forEach(button => {
+        button.onclick = () => {
+            course.lessons.splice(Number(button.getAttribute("data-i")), 1);
+            save();
+            renderLessons(courseIndex);
+        };
     });
 
     // Checkbox event
@@ -132,7 +156,22 @@ function renderLessons(courseIndex) {
 
     const done = course.lessons.filter(l => l.done).length;
     document.getElementById("courseProgress").textContent =
-        `${done} of ${course.lessons.length} lessons completed`;
+        `${done} of ${course.lessons.length} lessons completed (${percentDone(course)}%)`;
+    document.getElementById("courseBar").style.width = percentDone(course) + "%";
+}
+
+// Remove a course and everything in it, after asking first
+function deleteCourse(index) {
+    const course = courses[index];
+    if (!confirm(`Delete "${course.title}" and its ${course.lessons.length} lessons?`)) return;
+
+    courses.splice(index, 1);
+    openIndex = null;
+    mainContent.innerHTML = `
+        <h1>Welcome to EduVision</h1>
+        <p>Select a course or create a new one to begin.</p>
+    `;
+    save();
 }
 
 // -----------------------------
